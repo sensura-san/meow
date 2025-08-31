@@ -1,9 +1,16 @@
 #!/bin/bash
-echo "┌───────┐
-│ mrrp~ │
-└───────┘
-          ╱| 、         ／l、
-        （˚､. ７      （˚､ ｡ ７
-         |、~〵         l  ~ヽ
-         じしL)__ノ     じしf_)_ノ"
+PROGNAME=${0##*/}
+VERSION="1.1"
 
+mrrp="┌───────┐\n│ mrrp~ │\n└───────┘"
+cat1="  ╱| 、\n（˚､. ７\n |、~〵\n じしL)__ノ"
+cat2="  ／l、\n（˚､ ｡ ７\n  l  ~ヽ\n  じしf_)_ノ"
+
+printf "$mrrp\n"
+
+rand_int="$(( $RANDOM % 2 ))"
+if [ $rand_int == 0 ]; then
+  printf "$cat1\n"
+else
+  printf "$cat2\n"
+fi
