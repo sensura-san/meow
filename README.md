@@ -1,8 +1,7 @@
-<<<<<<< HEAD
 <img width="558" height="171" alt="image" src="https://github.com/user-attachments/assets/84cf3c53-fafa-4b81-95b1-443fee7e948b" />
 
 # nyaaaaaaaa
-... bash script and C programme for printing
+... bash script for printing kitty cats
 
 ```
 ┌───────┐
@@ -59,4 +58,3 @@ meow meow meow meow meow meow meow meow meow meow meow meow meow meow meow meow
 - make script more versatile :3c random messages & kitties
 - build script
 - install script
->>>>>>> fb955d9 (what the random kitty cat meow!)
