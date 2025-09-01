@@ -1,6 +1,8 @@
 #!/bin/bash
 # ---------------------------------------------------------------------------
 # meow - random cat meow simulator
+
+# Usage: `meow` to generate kitties that meow (duh)
 # ---------------------------------------------------------------------------
 PROGNAME=${0##*/}
 VERSION="1.1"
