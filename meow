@@ -1,16 +1,92 @@
 #!/bin/bash
+# ---------------------------------------------------------------------------
+# meow - random cat meow simulator
+# ---------------------------------------------------------------------------
 PROGNAME=${0##*/}
 VERSION="1.1"
 
-mrrp="┌───────┐\n│ mrrp~ │\n└───────┘"
-cat1="  ╱| 、\n（˚､. ７\n |、~〵\n じしL)__ノ"
-cat2="  ／l、\n（˚､ ｡ ７\n  l  ~ヽ\n  じしf_)_ノ"
+# def some strings
+box_characters=("┌" "┐" "└" "┘" "│" "─")
+meow_sfx=("mrrp" "nyan" "mreow" "mreoww" "mlem" "nyaa" "nya")
+meow_punctuation=("" "~" "!")
 
-printf "$mrrp\n"
+# def kitty cats nyan~
+cat_1=(
+  "  ╱| 、    "
+  "（˚､. ７   "
+  " |、~〵    "
+  " じしL)__ノ"
+)
+cat_2=(
+  "  ／l、     "
+  "（˚､ ｡ ７   "
+  "  l  ~ヽ    "
+  "  じしf_)_ノ"
+)
+cat_arr=(cat_1 cat_2)
 
-rand_int="$(( $RANDOM % 2 ))"
-if [ $rand_int == 0 ]; then
-  printf "$cat1\n"
-else
-  printf "$cat2\n"
-fi
+# get random vars
+RAND="$RANDOM"
+rand_cat="$(( RAND % ${#cat_arr[@]} ))"  # ${#cat_arr[0]}: ${} is defines the character boundaries of the array, # gets no. of elements, 0 gets 1st element, @ gets all elements in an array
+#TODO: add meowing w/ punc; u can get length of a string via ${#var}
+rand_meow_sfx="$(( RAND % ${#meow_sfx[@]} ))"
+rand_meow_punctuation="$(( RAND % ${#meow_punctuation[@]} ))"
+
+append_kitties () {       # expects params (e.g. append_kitties cat_1 cat_2)
+
+  local __resultvar=$1
+  shift 1
+
+  # check if all array lengths are the same, else return early
+  arr_len=()
+  for name in "$@"; do    # for each param passed in,
+    declare -n ref="$name"
+    arr_len+=("${#ref[@]}")
+  done
+  
+  for (( i = 1; i < ${#arr_len[@]}; i++ )); do
+    if [[ "${arr_len[0]}" != "${arr_len[i]}" ]]; then
+      printf "Length of parameters not equal."
+      return 1
+    fi
+  done
+
+  # actually append kitties to each other (expects kitties in blocks w/ spaces so they dont turn out disfigured)
+  final_arr=()
+  for ((i=0; i < arr_len[0]; i++)); do  # for the length of the array,
+    line_str=""
+    for name in "$@"; do                # for each parameter in the function,
+      declare -n ref="$name"
+      line_str+="${ref[i]}"             # append element of index i to the line_str.
+    done
+
+    final_arr+=("$line_str")            # finally append the combined string into final array
+  done
+
+  declare -n result=$__resultvar
+  result=("${final_arr[@]}")
+  return 1
+}
+
+#TODO: make the latter go thru all permutations..?? and add that value to randcat
+case $((rand_cat + (RAND % 3))) in
+  0)
+    printf '%s\n' "${cat_1[@]}"
+    ;;
+
+  1)
+    printf '%s\n' "${cat_2[@]}"
+    ;;
+
+  2)
+    append_kitties final_arr cat_1 cat_2
+    printf '%s\n' "${final_arr[@]}"
+    ;;
+  3)
+    append_kitties final_arr cat_2 cat_1
+    printf '%s\n' "${final_arr[@]}"
+    ;;
+  *)
+    printf "what the nya!? (rand_cat out of bounds)"
+    ;;
+esac
