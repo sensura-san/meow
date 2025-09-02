@@ -38,9 +38,9 @@ meow meow meow meow meow meow meow meow meow meow meow meow meow meow meow meow
 - uhm... mreoww! nyaa mrrp purr meoww nyaa
 
 # TODO
--[x] make script more versatile :3c random messages & kitties
--[ ] make it use long-form optcodes
--[ ] multi-line messages nyan
--[ ] robust kitty cat appendification via permutations
--[ ] build script
--[ ] install script
+- [x] make script more versatile :3c random messages & kitties
+- [ ] make it use long-form optcodes
+- [ ] multi-line messages nyan
+- [ ] robust kitty cat appendification via permutations
+- [ ] build script
+- [ ] install script
