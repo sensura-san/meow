@@ -3,14 +3,17 @@
 # nyaaaaaaaa
 ... bash script for printing random kitty cat(s) alongside a message
 
-## features
+# features
 - print a MotD (Meow of the Day)!
 - print a kitty cat! or two! or three! or a billion! its up to the catgorithm (i.e. kitty cat smashing on the keyboard within bash)
 - choose a meow-sage via `-m <sfx>`
 - want predictable outcomes? use `-s <seed>` to pre-define a seed
 - nyaaa
 
-## mreow!!!!!!
+# installation and run instructions (bash only)
+- download `meow` from releases to your preferred directory (e.g. `~/.local/bin`, `/usr/local/bin`, `/usr/bin`)
+- run `meow` anywhere any meow
+# mreow!!!!!!
 
 ```
 ┌───────┐
@@ -34,7 +37,7 @@ meow meow meow meow meow meow meow meow meow meow meow meow meow meow meow meow
 meow meow meow meow meow meow meow meow meow meow meow meow meow meow meow meow 
 meow meow meow meow meow meow meow meow meow meow meow meow meow meow meow meow 
 ```
-## Meowtivations
+# Meowtivations
 - uhm... mreoww! nyaa mrrp purr meoww nyaa
 
 # TODO
