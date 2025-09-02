@@ -2,15 +2,71 @@
 # ---------------------------------------------------------------------------
 # meow - random cat meow simulator
 
-# Usage: `meow` to generate kitties that meow (duh)
+# Usage: meow to generate kitties that meow (duh)
 # ---------------------------------------------------------------------------
 PROGNAME=${0##*/}
 VERSION="1.1"
 
-# def some strings
-box_characters=("┌" "┐" "└" "┘" "│" "─")
-meow_sfx=("mrrp" "nyan" "mreow" "mreoww" "mlem" "nyaa" "nya")
-meow_punctuation=("" "~" "!")
+usage() {
+  printf "%s\n" \
+    "Usage: ${PROGNAME} [-h|--help] [-s|--seed <seed>] [-m|--meow \"<sfx>\"]"
+  printf "%s\n" \
+    "        ${PROGNAME}"
+}
+
+help_message() {
+  cat <<- _EOF_
+  ${PROGNAME} - v${VERSION}
+  random cat meow simulator:
+  Generates some random kitty cat(s) and displays a message. You may set your own message if you like!
+
+  $(usage)
+
+  Options:
+
+  -h, --help          Display this help message and exit nyan~
+  -s, --seed <seed>   Choose a seed for a pre-determined outcome
+  -m, --meow "<sfx>"  Choose an kitty cat sound effect to display
+
+  NOTE: --<opt> commands currently not finished; 
+        kitty cat builders are working hard on the task :3c
+_EOF_
+}
+
+sflag=
+mflag=
+while getopts ":hs:m:" opt; do
+  case $opt in
+    h)
+      help_message
+      exit 0
+      ;;
+    s)
+      sflag=1
+      sval="$OPTARG"
+      ;;
+    m)
+      mflag=1
+      mval="$OPTARG"
+      ;;
+    :) 
+      echo "Option -$OPTARG requires an argument nya" >&2
+      exit 2
+      ;;
+    ?)
+      echo "Invalid option: -${OPTARG} mreow!!" >&2
+      exit 2
+      ;;
+  esac
+done
+
+# ---------------------------------------------------------------------------
+# declare variables
+# ---------------------------------------------------------------------------
+
+# def sfx and punc
+sfx_arr=("mrrp" "nyan" "mreow" "mreoww" "mlem" "nyaa" "nya")
+punc_arr=("" "~" "~~" "!" "~!" "!?" "!?!?" )
 
 # def kitty cats nyan~
 cat_1=(
@@ -25,70 +81,91 @@ cat_2=(
   "  l  ~ヽ    "
   "  じしf_)_ノ"
 )
-cat_arr=(cat_1 cat_2)
+cat_arr=(cat_1 cat_2) # cat_1/cat_2 only gets 1st element of array
+
+# ---------------------------------------------------------------------------
+# do some math
+# ---------------------------------------------------------------------------
 
 # get random vars
-RAND="$RANDOM"
-rand_cat="$(( RAND % ${#cat_arr[@]} ))"  # ${#cat_arr[0]}: ${} is defines the character boundaries of the array, # gets no. of elements, 0 gets 1st element, @ gets all elements in an array
-#TODO: add meowing w/ punc; u can get length of a string via ${#var}
-rand_meow_sfx="$(( RAND % ${#meow_sfx[@]} ))"
-rand_meow_punctuation="$(( RAND % ${#meow_punctuation[@]} ))"
+if [[ -z $sflag ]]; then
+  RAND="$RANDOM"
+else
+  RAND="$sval"
+fi
 
-append_kitties () {       # expects params (e.g. append_kitties cat_1 cat_2)
+if [[ -z $mflag ]]; then
+  sfx=${sfx_arr[(( RAND % ${#sfx_arr[@]} ))]}
+  punc=${punc_arr[$(( RAND % ${#punc_arr[@]} ))]}
+else
+  sfx="$mval"
+  punc=
+fi
 
-  local __resultvar=$1
-  shift 1
+rand_cat="$(( RAND % ${#cat_arr[@]} ))"
+
+# ---------------------------------------------------------------------------
+# define funcs
+# ---------------------------------------------------------------------------
+
+print_meow_box () {  # input: sfx (str), punc (str)
+
+  dashes=""
+  declare -n ref_1="$1"
+  declare -n ref_2="$2"
+  for ((i=1; i <= (${#ref_1} + ${#ref_2}); i++)); do
+    dashes+="─"
+  done
+
+  printf "┌─%s─┐\n" "$dashes"
+  printf "│ %s%s │\n" "$ref_1" "$ref_2"
+  printf "└─%s─┘\n" "$dashes"
+}
+
+# Appends each line of n arrays of same length; prints final array
+print_append_kitties () {       # expects params (e.g. append_kitties cat_1 cat_2)
 
   # check if all array lengths are the same, else return early
-  arr_len=()
-  for name in "$@"; do    # for each param passed in,
+  first_len=
+  for name in "$@"; do      # for each param passed in,
     declare -n ref="$name"
-    arr_len+=("${#ref[@]}")
-  done
-  
-  for (( i = 1; i < ${#arr_len[@]}; i++ )); do
-    if [[ "${arr_len[0]}" != "${arr_len[i]}" ]]; then
+    if [[ -z $first_len ]]; then
+      first_len="${#ref[@]}"
+    elif [[ $first_len -ne "${#ref[@]}" ]]; then
       printf "Length of parameters not equal."
       return 1
     fi
   done
 
   # actually append kitties to each other (expects kitties in blocks w/ spaces so they dont turn out disfigured)
-  final_arr=()
-  for ((i=0; i < arr_len[0]; i++)); do  # for the length of the array,
-    line_str=""
+  for ((i=0; i < first_len; i++)); do  # for the length of the array,
+    line_str=
     for name in "$@"; do                # for each parameter in the function,
       declare -n ref="$name"
       line_str+="${ref[i]}"             # append element of index i to the line_str.
     done
 
-    final_arr+=("$line_str")            # finally append the combined string into final array
+    printf '%s\n' "$line_str"           # print each str
   done
-
-  declare -n result=$__resultvar
-  result=("${final_arr[@]}")
-  return 1
 }
+
+# ---------------------------------------------------------------------------
+# printing stuff
+# ---------------------------------------------------------------------------
+
+print_meow_box sfx punc
 
 #TODO: make the latter go thru all permutations..?? and add that value to randcat
 case $((rand_cat + (RAND % 3))) in
   0)
-    printf '%s\n' "${cat_1[@]}"
-    ;;
+    printf '%s\n' "${cat_1[@]}" ;;
 
   1)
-    printf '%s\n' "${cat_2[@]}"
-    ;;
-
+    printf '%s\n' "${cat_2[@]}" ;;
   2)
-    append_kitties final_arr cat_1 cat_2
-    printf '%s\n' "${final_arr[@]}"
-    ;;
+    print_append_kitties cat_1 cat_2 ;;
   3)
-    append_kitties final_arr cat_2 cat_1
-    printf '%s\n' "${final_arr[@]}"
-    ;;
+    print_append_kitties cat_2 cat_1 ;;
   *)
-    printf "what the nya!? (rand_cat out of bounds)"
-    ;;
+    printf "what the nya!? (rand_cat out of bounds)" ;;
 esac
